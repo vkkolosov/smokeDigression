@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmokeDigression</string>
+
+    <string name="default_currency">____.__ RUB</string>
+    <string name="currency">RUB</string>
+
+    <string name="cost_of_pack">____ RUB</string>
+
+    <string name="set_stats"><u>Введите настройки</u></string>
+    <string name="last_time">Время последнего курения</string>
+    <string name="currently_nonsmoke">Текущее время не курения</string>
+    <string name="obj_interval">Ваш текущий интервал</string>
+
+    <string name="days_ec">Дневная экономия</string>
+    <string name="months_ec">Экономия в месяц</string>
+
+    <string name="in_day">ДЕНЬ</string>
+    <string name="in_month">МЕСЯЦ</string>
+
+    <string name="smoked">ВЫКУРИЛ</string>
+
+    <string name="donation">Донейшен</string>
+    <string name="reset">СБРОСИТЬ БАЗУ</string>
+
+    <string name="update_settings">ОБНОВИТЬ НАСТРОЙКИ</string>
+    <string name="cig_day">Сигареты в день</string>
+    <string name="cost_pack">Стоимость пачки</string>
+    <string name="time_sleep">Время сна</string>
+    <string name="time_sleep_w">Время сна в выходные</string>
+    <string name="dig_rate">Скорость дигрессии</string>
+    <string name="add_widget">Добавить виджет</string>
+
+    <string name="now"><u>Курение</u></string>
+
+    <string name="reset_msg">Это сотрет текущую базу</string>
+    <string name="ok">Ок</string>
+    <string name="not_yet">Пока нет</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="enter">Введите</string>
+    <string name="cig_day_msg">сколько вы выкуриваете сигарет в день:</string>
+    <string name="cost_pack_msg">сколько стоит пачка сигарет:</string>
+
+    <string name="select_time">Выберите время</string>
+
+    <string name="your_obj_dig_rate">вашу намеченную скорость дигрессии:</string>
+
+    <string name="done">ЗАПОЛНЕНО</string>
+    <string name="done_msg">Вы заполнили? \n\nНа рабочий экран будет добавлен виджет</string>
+    <string name="not_all_fields">Вы заполнили не все поля</string>
+    <string name="not">Нет</string>
+    <string name="widget_added">Виджет добавлен!</string>
+    <string name="month">месяц</string>
+    <string name="erased">Удалено</string>
+    <string name="jan">Январь</string>
+    <string name="feb">Февраль</string>
+    <string name="mar">Март</string>
+    <string name="apr">Апрель</string>
+    <string name="may">Май</string>
+    <string name="jun">Июнь</string>
+    <string name="jul">Июль</string>
+    <string name="aug">Август</string>
+    <string name="sep">Сентябрь</string>
+    <string name="oct">Октябрь</string>
+    <string name="nov">Ноябрь</string>
+    <string name="dec">Декабрь</string>
+    <string name="day_graph">день (никотин)</string>
+    <string name="month_graph">(сигареты)</string>
+    <string name="h">ч</string>
+    <string name="min">мин</string>
+
+</resources>

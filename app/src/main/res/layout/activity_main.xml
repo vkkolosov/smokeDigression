@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/i"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="48dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:textSize="24sp"
+                    android:text="___"
+                    android:textAllCaps="false" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/text_set_stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="12dp"
+                    android:text="@string/set_stats"
+                    android:textAllCaps="false" />
+
+                <ImageButton
+                    android:id="@+id/settings_button"
+                    android:layout_width="42dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:backgroundTint="?android:attr/panelBackground"
+                    android:src="@drawable/settings_24b" />
+            </LinearLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="horizontal"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/last_time" />
+
+                <TextView
+                    android:id="@+id/last_cigarette_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="18dp"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="12dp"
+                    android:text="__:__" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/currently_nonsmoke" />
+
+                <TextView
+                    android:id="@+id/non_smoke"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="2"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="12dp"
+                    android:text="__:__"
+                    android:textColor="@color/teal_200" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="3"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/obj_interval" />
+
+                <TextView
+                    android:id="@+id/your_interval"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="3"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="12dp"
+                    android:text="__:__"
+                    android:textColor="@color/teal_200" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="4"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="4"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="24dp"
+                    android:text=""
+                    android:textColor="@color/teal_200" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="5"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/days_ec" />
+
+                <TextView
+                    android:id="@+id/day_economy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="5"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="12dp"
+                    android:text="@string/default_currency"
+                    android:textColor="@color/teal_200" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="6"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/months_ec" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="6"
+                    android:layout_column="0"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="12dp"
+                    android:padding="12dp"
+                    android:text="@string/months_ec" />
+
+                <TextView
+                    android:id="@+id/month_economy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="6"
+                    android:layout_column="1"
+                    android:layout_gravity="left"
+
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="sans-serif-light"
+                    android:padding="12dp"
+                    android:text="@string/default_currency"
+                    android:textColor="@color/teal_200" />
+
+            </GridLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                tools:ignore="MissingConstraints">
+
+                <ImageButton
+                    android:id="@+id/left"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="0dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/left"
+                    android:textColor="@color/grey_custom" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/common_chart"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center" />
+
+                <ImageButton
+                    android:id="@+id/right"
+                    android:layout_width="36dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="0dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/right"
+                    android:textColor="@color/grey_custom" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/cigarette_in_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="40dp"
+                    android:text="@string/in_day"
+                    android:textSize="16dp"></TextView>
+
+                <TextView
+                    android:id="@+id/cigarette_in_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:text="@string/in_month"
+                    android:textSize="16dp"></TextView>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/smoked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-light"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#008B8B"
+                android:text="@string/smoked" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="16dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/donate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/donation" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/reset_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/reset" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

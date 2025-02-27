@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">SmokeDigression</string>
+
+    <string name="default_currency">____.__ USD</string>
+    <string name="currency">USD</string>
+
+    <string name="cost_of_pack">____ USD</string>
+
+    <string name="set_stats"><u>Set your stats here</u></string>
+    <string name="last_time">Last time smoked cigarette</string>
+    <string name="currently_nonsmoke">Currently nonSmoke</string>
+    <string name="obj_interval">Your objective interval</string>
+
+    <string name="days_ec">Day\'s economy</string>
+    <string name="months_ec">Month\'s economy</string>
+
+    <string name="in_day">IN DAY</string>
+    <string name="in_month">IN MONTH</string>
+
+    <string name="smoked">SMOKED</string>
+
+    <string name="donation">Donation</string>
+    <string name="reset">RESET ALL</string>
+
+    <string name="update_settings">UPDATE SETTINGS</string>
+    <string name="cig_day">Cigarettes in a day</string>
+    <string name="cost_pack">Cost of your pack</string>
+    <string name="time_sleep">Time your sleep</string>
+    <string name="time_sleep_w">Time your sleep weekend</string>
+    <string name="dig_rate">Digression rate</string>
+    <string name="add_widget">Add widget</string>
+
+    <string name="now"><u>Smoking</u></string>
+
+    <string name="reset_msg">It will erase all data</string>
+    <string name="ok">Ok</string>
+    <string name="not_yet">Not yet</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="enter">Enter</string>
+    <string name="cig_day_msg">cigarettes in a day:</string>
+    <string name="cost_pack_msg">"cost of your pack:"</string>
+
+    <string name="select_time">Select time</string>
+
+    <string name="your_obj_dig_rate">your objective digression rate:</string>
+
+    <string name="done">DONE</string>
+    <string name="done_msg">Do you done? \n\nNew widget will be added to your home screen</string>
+    <string name="not_all_fields">You have set up not all fields</string>
+    <string name="not">Not</string>
+    <string name="widget_added">Widget added!</string>
+    <string name="month">month</string>
+    <string name="erased">Erased</string>
+    <string name="jan">January</string>
+    <string name="feb">February</string>
+    <string name="mar">March</string>
+    <string name="apr">April</string>
+    <string name="may">May</string>
+    <string name="jun">June</string>
+    <string name="jul">July</string>
+    <string name="aug">August</string>
+    <string name="sep">September</string>
+    <string name="oct">October</string>
+    <string name="nov">November</string>
+    <string name="dec">December</string>
+    <string name="day_graph">day (nicotine)</string>
+    <string name="month_graph">(cigarettes)</string>
+    <string name="h">h</string>
+    <string name="min">min</string>
+
+</resources>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="44dp"
+            android:layout_marginTop="42dp"
+            android:padding="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/update_settings"
+            android:textColor="@color/main_theme"
+            />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_marginLeft="44dp"
+                android:layout_marginTop="38dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="@string/cig_day" />
+
+            <TextView
+                android:id="@+id/cigarette_in_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="38dp"
+                android:fontFamily="sans-serif-light"
+                android:ems="4"
+                android:text="____ "
+                android:textColor="@color/teal_200" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:layout_marginLeft="44dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="@string/cost_pack" />
+
+            <TextView
+                android:id="@+id/cost_of_pack"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="0dp"
+                android:fontFamily="sans-serif-light"
+                android:ems="4"
+                android:text="@string/cost_of_pack"
+                android:textColor="@color/teal_200" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_row="4"
+                android:layout_column="0"
+                android:layout_marginLeft="36dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="5"
+                android:layout_column="0"
+                android:layout_marginLeft="44dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="@string/time_sleep" />
+
+            <TextView
+                android:id="@+id/work_sleep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="5"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="24dp"
+                android:fontFamily="sans-serif-light"
+                android:text="__:__ h"
+                android:textColor="@color/teal_200" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="6"
+                android:layout_column="0"
+                android:layout_marginLeft="44dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="@string/time_sleep_w" />
+
+            <TextView
+                android:id="@+id/weeknd_sleep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="6"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="24dp"
+                android:fontFamily="sans-serif-light"
+                android:text="__:__ h"
+                android:textColor="@color/teal_200" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_row="7"
+                android:layout_column="0"
+                android:layout_marginLeft="36dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="8"
+                android:layout_column="0"
+                android:layout_marginLeft="44dp"
+                android:layout_marginRight="12dp"
+                android:padding="12dp"
+                android:text="@string/dig_rate" />
+
+            <TextView
+                android:id="@+id/temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_row="8"
+                android:layout_column="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="24dp"
+                android:fontFamily="sans-serif-light"
+                android:text="____ min"
+                android:textColor="@color/teal_200" />
+
+            <Button
+                android:id="@+id/button_done"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:layout_row="10"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="54dp"
+                android:layout_marginTop="54dp"
+                android:backgroundTint="#008B8B"
+                android:fontFamily="sans-serif-light"
+                android:textAllCaps="false"
+                android:text="@string/add_widget"
+                android:textColor="@color/white" />
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+        </GridLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
