@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -115,6 +117,16 @@ public class MainActivity extends AppCompatActivity {
     public static List<Entry> cachedAllSmokedCigarettesEntity;
     public static List<Entry> cachedMonthSmokedCigarettesEntity;
 
+    private final Handler timerHandler = new Handler(Looper.getMainLooper());
+    private final Runnable timerRunnable = new Runnable() {
+        @RequiresApi(api = Build.VERSION_CODES.S)
+        @Override
+        public void run() {
+            updateCurrentlyNonSmokeUI(); // Обновляем текст
+            timerHandler.postDelayed(this, 1000); // Перезапускаем строго через 1 секунду (1000 мс)
+        }
+    };
+
     private static String local_currency;
 
     @SuppressLint("ResourceType")
@@ -131,35 +143,24 @@ public class MainActivity extends AppCompatActivity {
         monthEconomy = findViewById(R.id.month_economy);
 
         i = findViewById(R.id.i);
+        /* пока отключу сайт
         i.setOnClickListener(v -> {
             Uri uri = Uri.parse("https://smokedigression.ru/forum/");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         });
-
+        */
         left = findViewById(R.id.left);
         left.setOnClickListener(v -> {
             //сделать switch на month
             if (monthPicked == 0) {
                 chosenDate = chosenDate.minusDays(1);
                 CommonChart.setDayLineChart(this, smokedCigarettesDao, executors, lineChart, chosenDate);
-                if (chosenDate.isEqual(firstDate.toLocalDate())) {
-                    left.setClickable(false);
-                }
-                if (chosenDate.isBefore(LocalDate.now())) {
-                    right.setClickable(true);
-                }
+                updateClickableArrowsDay();
             } else {
                 chosenMonth = chosenMonth.minusMonths(1);
                 CommonChart.setMonthLineChart(this, smokedCigarettesDao, executors, lineChart, chosenMonth);
-                if (firstDate.getYear() <= LocalDate.now().getYear()
-                        && chosenMonth.getMonth().getValue() <= firstDate.toLocalDate().getMonth().getValue()) {
-                    left.setClickable(false);
-                }
-                if (chosenMonth.getYear() < LocalDate.now().getYear()
-                        || chosenMonth.getMonth().getValue() < LocalDate.now().getMonth().getValue()) {
-                    right.setClickable(true);
-                }
+                updateClickableArrowsMonth(LocalDate.now());
             }
         });
         right = findViewById(R.id.right);
@@ -167,29 +168,14 @@ public class MainActivity extends AppCompatActivity {
             if (monthPicked == 0) {
                 chosenDate = chosenDate.plusDays(1);
                 CommonChart.setDayLineChart(this, smokedCigarettesDao, executors, lineChart, chosenDate);
-                if (chosenDate.isEqual(LocalDate.now())) {
-                    right.setClickable(false);
-                }
-                if (chosenDate.isAfter(firstDate.toLocalDate())) {
-                    left.setClickable(true);
-                }
+                updateClickableArrowsDay();
             } else {
                 chosenMonth = chosenMonth.plusMonths(1);
                 CommonChart.setMonthLineChart(this, smokedCigarettesDao, executors, lineChart, chosenMonth);
-                if (chosenMonth.getYear() == LocalDate.now().getYear()
-                        && chosenMonth.getMonth().getValue() == LocalDate.now().getMonth().getValue()) {
-                    right.setClickable(false);
-                }
-                if (chosenMonth.getMonth().getValue() > firstDate.toLocalDate().getMonth().getValue()
-                        && firstDate.getYear() <= LocalDate.now().getYear()) {
-                    left.setClickable(true);
-                }
+                updateClickableArrowsMonth(LocalDate.now());
             }
         });
-        //инициализация
-        if (chosenDate.isEqual(LocalDate.now()) || chosenMonth.getMonth().getValue() == LocalDate.now().getMonth().getValue()) {
-            right.setClickable(false);
-        }
+
         //здесь инициализируем репозитории
         SettingsRepository.initialize(this);
         settingsDao = SettingsRepository.get().settingsDao;
@@ -207,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!result.isEmpty()) {
                     firstDate = result.get(0).date;
                     updateClickableArrowsDay();
+                    updateClickableArrowsMonth(LocalDate.now());
                     lastDate = result.get(result.size() - 1).date;
                     runOnUiThread(() -> {
                         lastCigarette.setText(secondsFormat(lastDate.getHour(), lastDate.getMinute(), lastDate.getSecond()));
@@ -306,6 +293,8 @@ public class MainActivity extends AppCompatActivity {
                             //TODO возможно надо сделать update arrows
                             //TODO сделать метод setOnDayArrows
                             CommonChart.setDayLineChart(getBaseContext(), smokedCigarettesDao, executors, lineChart, LocalDate.now());
+                            updateClickableArrowsDay();
+                            updateClickableArrowsMonth(LocalDate.now());
                             if (setOn != null && setOn == 1) {
                                 //UPDATE UI ДЛЯ OBJECTIVE INTERVAL
                                 runOnUiThread(() -> updateObjectiveInterval(settingsEntity.cigarettes, settingsEntity.date, settingsEntity.sleep, settingsEntity.sleepW, settingsEntity.rate));
@@ -329,13 +318,14 @@ public class MainActivity extends AppCompatActivity {
                 monthPicked = 0;
                 CommonChart.setDayLineChart(this, smokedCigarettesDao, executors, lineChart, localDate);
                 updateClickableArrowsDay();
+                updateClickableArrowsMonth(LocalDate.now());
             };
             LocalDate currentDate = LocalDate.now();
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     this,
                     onDateSetListener,
                     currentDate.getYear(),
-                    currentDate.getMonth().getValue(),
+                    currentDate.getMonth().getValue() - 1,
                     currentDate.getDayOfMonth());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(Date.from(firstDate.atZone(ZoneId.systemDefault()).toInstant()));
@@ -397,6 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 updateLastSmokedCigaretteUI();
                 updateCurrentlyNonSmokeUI();
                 updateClickableArrowsDay();
+                updateClickableArrowsMonth(LocalDate.now());
                 updateWidgets(this);
 
                 //TODO ВОЗМОЖНО ХОТЕЛ ТУТ ЧТО-ТО ДОБАВИТЬ
@@ -439,13 +430,14 @@ public class MainActivity extends AppCompatActivity {
                         monthPicked = 0;
                         CommonChart.setDayLineChart(this, smokedCigarettesDao, executors, lineChart, localDate);
                         updateClickableArrowsDay();
+                        updateClickableArrowsMonth(LocalDate.now());
                     };
                     LocalDate currentDate = LocalDate.now();
                     DatePickerDialog datePickerDialog = new DatePickerDialog(
                             this,
                             onDateSetListener,
                             currentDate.getYear(),
-                            currentDate.getMonth().getValue(),
+                            currentDate.getMonth().getValue() - 1,
                             currentDate.getDayOfMonth());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(Date.from(firstDate.atZone(ZoneId.systemDefault()).toInstant()));
@@ -461,6 +453,10 @@ public class MainActivity extends AppCompatActivity {
             textDialog.show();
         });
 
+        updateClickableArrowsDay();
+        updateClickableArrowsMonth(LocalDate.now());
+
+
         //TODO ПОЧЕМУ-ТО ОБНОВЛЯЕТСЯ ДВАЖДЫ
         /*
 D/CommonChart: dayLineChartUpdated 2024-09-15T23:30:27.904577
@@ -471,39 +467,6 @@ D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:07.955191
 D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:25.148050
 D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:27.959274
          */
-        Thread lineChartThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    while (true) {
-                        sleep(20000);
-                        if (monthPicked == 0) {
-                            updateDayLineChart();
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        lineChartThread.start();
-
-        Thread uiTread = new Thread() {
-            @RequiresApi(api = Build.VERSION_CODES.S)
-            @Override
-            public void run() {
-                try {
-                    while (true) {
-                        updateCurrentlyNonSmokeUI();
-                        sleep(100);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        uiTread.start();
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
@@ -512,14 +475,26 @@ D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:27.959274
         super.onResume();
         updateSettingsEntity();
         if (setOn != null && setOn == 1) {
-            updateSettingsEntity();
             updateLastSmokedCigarette();
             updateLastSmokedCigaretteUI();
             updateCurrentlyNonSmokeUI();
             updateClickableArrowsDay();
+            updateClickableArrowsMonth(LocalDate.now());
             CommonChart.setDayLineChart(this, smokedCigarettesDao, executors, lineChart, chosenDate);
         }
         local_currency = getString(R.string.currency);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        timerHandler.post(timerRunnable); // Запускаем таймер, когда пользователь ОТКРЫЛ приложение
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        timerHandler.removeCallbacks(timerRunnable); // Мгновенно СТОПАЕМ таймер, когда пользователь СВЕРНУЛ приложение
     }
 
     private void updateSettingsEntity() {
@@ -733,30 +708,25 @@ D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:27.959274
 
     private void updateClickableArrowsDay() {
         if (monthPicked == 0) {
-            if (chosenDate.isEqual(firstDate.toLocalDate())) {
-                left.setClickable(false);
-            }
-            if (chosenDate.isBefore(LocalDate.now())) {
-                right.setClickable(true);
-            }
-            if (chosenDate.isAfter(firstDate.toLocalDate())) {
-                left.setClickable(true);
-            }
+            // Влево можно кликать, только если выбранная дата СТРОГО ПОЗЖЕ даты первой сигареты
+            left.setClickable(!chosenDate.isEqual(firstDate.toLocalDate()));
+            // Вправо можно кликать, только если выбранная дата СТРОГО РАНЬШЕ текущей системной даты
+            right.setClickable(!chosenDate.isEqual(LocalDate.now()));
         }
     }
 
     private void updateClickableArrowsMonth(LocalDate now) {
-        if (chosenMonth.withDayOfMonth(1).isBefore(firstDate.toLocalDate().withDayOfMonth(2))) {
-            left.setClickable(false);
-        }
-        if (chosenMonth.withDayOfMonth(2).isAfter(now.withDayOfMonth(1))) {
-            right.setClickable(false);
-        }
-        if (chosenMonth.withDayOfMonth(2).isBefore(now.withDayOfMonth(1))) {
-            right.setClickable(true);
-        }
-        if (chosenMonth.withDayOfMonth(1).isAfter(firstDate.toLocalDate().withDayOfMonth(2))) {
-            left.setClickable(true);
+        if (monthPicked == 1) {
+            // Приводим все даты к 1-му числу для точного сравнения месяцев с учётом ГОДА
+            LocalDate firstMonth = firstDate.toLocalDate().withDayOfMonth(1);
+            LocalDate currentSelectedMonth = chosenMonth.withDayOfMonth(1);
+            LocalDate currentRealMonth = now.withDayOfMonth(1);
+
+            // Влево можно кликать, только если выбранный месяц СТРОГО ПОЗЖЕ месяца первой сигареты
+            left.setClickable(currentSelectedMonth.isAfter(firstMonth));
+
+            // Вправо можно кликать, только если выбранный месяц СТРОГО РАНЬШЕ текущего реального месяца
+            right.setClickable(currentSelectedMonth.isBefore(currentRealMonth));
         }
     }
 }

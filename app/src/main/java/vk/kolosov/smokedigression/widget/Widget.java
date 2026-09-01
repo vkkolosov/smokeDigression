@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import vk.kolosov.smokedigression.MainActivity;
 import vk.kolosov.smokedigression.R;
 import vk.kolosov.smokedigression.db.SmokedCigarettesRepository;
 import vk.kolosov.smokedigression.db.dao.SmokedCigarettesDao;

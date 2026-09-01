@@ -2,7 +2,6 @@ package vk.kolosov.smokedigression.charts;
 
 import static android.os.Looper.getMainLooper;
 import static vk.kolosov.smokedigression.MainActivity.*;
-import static vk.kolosov.smokedigression.MainActivity.updateDaysEconomy;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,15 +13,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -30,8 +26,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,11 +127,19 @@ public class CommonChart {
             @RequiresApi(api = Build.VERSION_CODES.S)
             @Override
             public void onSuccess(List<SmokedCigarettesEntity> result) {
-                if (localDate != LocalDate.now() && result.isEmpty()) {
+                // Сортировка полученного списка из БД для корректной хронологии
+                List<SmokedCigarettesEntity> sortedResult = result.stream()
+                        .sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
+                        .collect(Collectors.toList());
+
+                if (localDate != LocalDate.now() && sortedResult.isEmpty()) {
                     lineChart.clear();
                 }
-                List<Entry> entries = getDayGraphEntries(context, result, localDate);
+                List<Entry> entries = getDayGraphEntries(context, sortedResult, localDate);
                 if (!entries.isEmpty()) {
+                    // Гарантированная сортировка точек по оси X перед передачей в MPAndroidChart
+                    entries.sort(Comparator.comparingDouble(Entry::getX));
+
                     LineDataSet lineDataSet = new LineDataSet(entries, localDate + " " + context.getString(R.string.day_graph));
                     LineData lineData = new LineData(lineDataSet);
                     lineChart.clear();
@@ -141,11 +147,11 @@ public class CommonChart {
                 } else {
                     lineChart.clear();
                 }
-                Set<SmokedCigarettesEntity> currentDates = result.stream()
+                Set<SmokedCigarettesEntity> currentDates = sortedResult.stream()
                         .filter(date -> date.date.toLocalDate().isEqual(localDate))
                         .collect(Collectors.toSet());
                 currentCigarettesDay = currentDates.size();
-                Set<SmokedCigarettesEntity> monthDates = result.stream()
+                Set<SmokedCigarettesEntity> monthDates = sortedResult.stream()
                         .filter(date -> (date.date.getMonth().getValue() == localDate.getMonth().getValue())
                                 && (date.date.getYear() == localDate.getYear()))
                         .collect(Collectors.toSet());
@@ -170,25 +176,24 @@ public class CommonChart {
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     private static List<Entry> getDayGraphEntries(Context context, List<SmokedCigarettesEntity> result, LocalDate localDate) {
-        Map<String, Integer> lastDay = new HashMap<String, Integer>() {{
-            put("day", 0);
-        }};
+        Map<String, LocalDate> lastDateMap = new HashMap<>();
         List<Entry> graph = new ArrayList<>();
         List<Entry> entries = new ArrayList<>();
-        Entry zeroEntry = getZeroEntry(result, localDate, lastDay);
+        Entry zeroEntry = getZeroEntry(result, localDate, lastDateMap);
         //TODO сделать javadoc
-        if (lastDay.get("day") > localDate.getDayOfYear()) {
-            int lastDaysInYear = localDate.minusYears(1).lengthOfYear();
-            int delay = lastDaysInYear - lastDay.get("day");
-            zeroEntry.setX(zeroEntry.getX() - 2400 * (localDate.getDayOfYear() + delay));
-        } else {
-            zeroEntry.setX(zeroEntry.getX() - 2400 * (localDate.getDayOfYear() - lastDay.get("day")));
+
+        LocalDate lastDate = lastDateMap.get("lastDate");
+        if (lastDate != null) {
+            // Исправление съезда при переходе года: абсолютный расчёт разницы дней
+            long daysBetween = ChronoUnit.DAYS.between(lastDate, localDate);
+            zeroEntry.setX((float) (zeroEntry.getX() - 2400 * daysBetween));
         }
+
         Entry firstEcho = zeroEntry;
         List<SmokedCigarettesEntity> dayEntities = result.stream()
                 .filter(smokedCigarettesEntity -> smokedCigarettesEntity.date.toLocalDate().equals(localDate))
                 //в бд упорядочено
-                //.sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
+                .sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
                 .collect(Collectors.toList());
 
         currentCigarettesDay = dayEntities.size();
@@ -249,21 +254,23 @@ public class CommonChart {
     //НАХОДИТСЯ ПОСЛЕДНЯЯ ТОЧКА ДО ТЕКУЩЕЙ ДАТЫ ПУТЕМ ПОСТРОЕНИЯ ГРАФИКА
     //первостепенно расчитывается Y, после выполнения метода корректируется X
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static Entry getZeroEntry(List<SmokedCigarettesEntity> result, LocalDate localDate, Map<String, Integer> lastDay) {
+    public static Entry getZeroEntry(List<SmokedCigarettesEntity> result, LocalDate localDate, Map<String, LocalDate> lastDateMap) {
         List<SmokedCigarettesEntity> sortedEntities = result.stream()
                 .filter(smokedCigarettesEntity -> smokedCigarettesEntity.date.toLocalDate().isBefore(localDate))
                 //в бд упорядочено
-                //.sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
+                .sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
                 .collect(Collectors.toList());
         //СДЕЛАЮ ИНКРЕМЕНТ Y НА 120
         Entry first = new Entry(0, 0);
         Entry second;
         LocalDateTime firstDate;
-        int firstDay = 0;
+        LocalDate previousDate = null;
+
         for (int i = 0; i < sortedEntities.size(); i++) {
+            LocalDateTime currentDate = sortedEntities.get(i).date;
             if (i == 0) {
-                firstDate = sortedEntities.get(i).date;
-                firstDay = firstDate.getDayOfYear();
+                firstDate = currentDate;
+                previousDate = firstDate.toLocalDate();
                 int hours = firstDate.getHour();
                 int minutes = firstDate.getMinute();
                 int x1 = hours * 100 + minutes * 100 / 60;
@@ -272,35 +279,38 @@ public class CommonChart {
             }
             int x1 = (int) first.getX();
             int y1 = (int) first.getY();
-            LocalDateTime secondDate = sortedEntities.get(i).date;
 
-            int secondDay = secondDate.getDayOfYear();
-            int hours = secondDate.getHour();
-            int minutes = secondDate.getMinute();
+            LocalDate currentLocalDate = currentDate.toLocalDate();
+            int hours = currentDate.getHour();
+            int minutes = currentDate.getMinute();
 
             int x2 = hours * 100 + minutes * 100 / 60;
-            int days = secondDay - firstDay;
+
+            // Расчет разницы дней через ChronoUnit.DAYS без сбоя при смене года
+            long days = ChronoUnit.DAYS.between(previousDate, currentLocalDate);
+
             //Переход от дня к дню (промежуточные)
             if (days >= 1) { //уже если больше дня
-                x1 = x1 - 2400 - 2400 * (days - 1); //плюс расстояние по дню
+                x1 = (int) (x1 - 2400 - 2400 * (days - 1)); //плюс расстояние по дню
             }
-            //общий график построения y2, исходя из x2 и x1 (время точек) и последнего значения = y1
-            //мы тут y считаем в первую очередь
-            int y2 = (int) ((1 - 0.0025 * (x2 - x1)) * y1);
+            // Экспоненциальный распад никотина с периодом полураспада 2 часа (200 X-units)
+            int deltaX = x2 - x1;
+            int y2 = (int) (y1 * Math.pow(0.5, deltaX / 200.0));
 
-            if (y2 < 0) {
+            // Порог отсечения: если осталось меньше 1% никотина, опускаем до нуля
+            if (y2 < 1) {
                 y2 = 0;
             }
 
             y2 = y2 + 120;
 
-            firstDay = secondDay;
+            previousDate = currentLocalDate;
             second = new Entry(x2, y2);
             first = second;
 
             //сохраняем последнюю дату
             if (i == sortedEntities.size() - 1) {
-                lastDay.put("day", firstDay); //тут уже смотрим последний день, когда посчитан y
+                lastDateMap.put("lastDate", previousDate); //тут уже смотрим последний день, когда посчитан y
             }
         }
 
@@ -318,7 +328,9 @@ public class CommonChart {
                 //TODO берет ~00:00:05, a last настроен на 23:59:00 ровно
                 .findFirst()
                 .orElse(null); //могут быть проблемы
-        middleEntries.add(x0);
+        if (x0 != null) {
+            middleEntries.add(x0);
+        }
 
         if (entries.size() == 1) {
             return middleEntries;
@@ -367,9 +379,11 @@ public class CommonChart {
             x1 = x1 - 2400;
         }
 
-        int y2 = (int) ((1 - 0.0025 * (x2 - x1)) * y1);
+        // Экспоненциальный распад никотина
+        int deltaX = x2 - x1;
+        int y2 = (int) (y1 * Math.pow(0.5, deltaX / 200.0));
 
-        if (y2 < 0) {
+        if (y2 < 1) {
             y2 = 0;
         }
 
@@ -386,13 +400,16 @@ public class CommonChart {
 
         int currentX = (int) second.getX();
         int numberOfEntries = (int) (currentX - (zero.getX() - 2400)) / 15;
+        if (numberOfEntries <= 0) return intermediateEntries;
+
         float increment = (currentX - zero.getX()) / numberOfEntries;
         for (int i = 0; i < numberOfEntries; i++) {
 
             int x = (int) (zero.getX() + increment * (i + 1));
-            int y = (int) ((1 - 0.0025 * increment * (i + 1)) * zero.getY());
+            float deltaX = increment * (i + 1);
+            int y = (int) (zero.getY() * Math.pow(0.5, deltaX / 200.0));
 
-            if (y < 0) {
+            if (y < 1) {
                 y = 0;
             }
 
@@ -408,13 +425,16 @@ public class CommonChart {
 
         int currentX = (int) second.getX();
         int numberOfEntries = (int) (currentX - first.getX()) / 15;
+        if (numberOfEntries <= 0) return intermediateEntries;
+
         float increment = (currentX - first.getX()) / numberOfEntries;
         for (int i = 0; i < numberOfEntries; i++) {
 
             int x = (int) (first.getX() + increment * (i + 1));
-            int y = (int) ((1 - 0.0025 * increment * (i + 1)) * first.getY());
+            float deltaX = increment * (i + 1);
+            int y = (int) (first.getY() * Math.pow(0.5, deltaX / 200.0));
 
-            if (y < 0) {
+            if (y < 1) {
                 y = 0;
             }
 
@@ -449,17 +469,20 @@ public class CommonChart {
             currentX = 1;
         }
         int numberOfEntries = (int) (currentX - smokedEntry.getX()) / 5; //TODO ВЫНЕСТИ ДЕЛИМЕТЕР В СИГНАТУРУ И ИНКРЕМЕНТИРОВАТЬ ЕГО ВМЕСТЕ С ТАЙМЕРОМ
+        if (numberOfEntries <= 0) return intermediateEntries;
+
         float increment = (currentX - smokedEntry.getX()) / numberOfEntries;
         for (int i = 0; i < numberOfEntries; i++) {
             //y	    x
             //20	0
             //15	100
             //10	200 - через 2 часа сокращение в 2 раза
-            //Y = (1-0,0025X)*Y1 - КОРРЕКТНЫЙ ГРАФИК
+            //Y = Y1 * (0.5 ^ (deltaX / 200)) - КОРРЕКТНЫЙ ЭКСПОНЕНЦИАЛЬНЫЙ ГРАФИК
             int x = (int) (smokedEntry.getX() + increment * (i + 1));
-            int y = (int) ((1 - 0.0025 * increment * (i + 1)) * smokedEntry.getY());
+            float deltaX = increment * (i + 1);
+            int y = (int) (smokedEntry.getY() * Math.pow(0.5, deltaX / 200.0));
 
-            if (y < 0) {
+            if (y < 1) {
                 y = 0;
             }
 
@@ -510,7 +533,12 @@ public class CommonChart {
             @RequiresApi(api = Build.VERSION_CODES.S)
             @Override
             public void onSuccess(List<SmokedCigarettesEntity> result) {
-                if (result.isEmpty()) {
+                // Сортировка записей за месяц по дате
+                List<SmokedCigarettesEntity> sortedResult = result.stream()
+                        .sorted(Comparator.comparing(smokedCigarettesEntity -> smokedCigarettesEntity.date))
+                        .collect(Collectors.toList());
+
+                if (sortedResult.isEmpty()) {
                     LocalDate now = LocalDate.now();
                     int lengthOfMonth;
                     if (month.withDayOfMonth(2).isAfter(now.withDayOfMonth(1))) {
@@ -526,8 +554,11 @@ public class CommonChart {
                     lineChart.setData(lineData);
                 } else {
                     //TODO Добавить zero по currentDay
-                    List<Entry> entries = getMonthGraphEntries(result, month);
+                    List<Entry> entries = getMonthGraphEntries(sortedResult, month);
                     if (!entries.isEmpty()) {
+                        // Гарантированная сортировка
+                        entries.sort(Comparator.comparingDouble(Entry::getX));
+
                         LineDataSet lineDataSet = new LineDataSet(entries, month.getMonth() + "-" + month.getYear() + " " + context.getString(R.string.month_graph));
                         LineData lineData = new LineData(lineDataSet);
                         lineData.setValueFormatter(new DefaultValueFormatter(1));
@@ -537,7 +568,7 @@ public class CommonChart {
                         lineChart.clear();
                     }
                 }
-                currentCigarettesMonth = result.size();
+                currentCigarettesMonth = sortedResult.size();
 
                 ((Activity) context).runOnUiThread(() -> {
                     if (setOn != null && setOn == 1) {
@@ -599,8 +630,10 @@ public class CommonChart {
     }
 
     private static void insertBetweenNullEntries(int currentDay, int nextDay, List<Entry> graph) {
-        for (int i = currentDay + 1; i < nextDay; i++) {
-            graph.add(new Entry(i, 0));
+        if (currentDay < nextDay) {
+            for (int i = currentDay + 1; i < nextDay; i++) {
+                graph.add(new Entry(i, 0));
+            }
         }
     }
 
@@ -620,7 +653,7 @@ public class CommonChart {
             if (now.isBefore(month.withDayOfMonth(month.lengthOfMonth()))) {
                 nextDay = now.getDayOfMonth();
             } else {
-                nextDay = now.lengthOfMonth();
+                nextDay = month.lengthOfMonth();
             }
             insertBetweenNullEntries(lastEntity.date.getDayOfMonth(), nextDay + 1, graph);
         } else {
