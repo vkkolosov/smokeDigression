@@ -19,48 +19,48 @@ public class ScrollViewDates {
     @RequiresApi(api = Build.VERSION_CODES.S)
     public static List<String> convertToScrollViewList(Context context) {
         List<String> months = new ArrayList<>();
-        LocalDateTime firstDate = LocalDateTime.from(MainActivity.firstDate);
-        LocalDateTime now = LocalDateTime.now().withDayOfMonth(2);
-        while (!firstDate.isAfter(now)) {
-            switch (firstDate.getMonth()) {
+        LocalDate firstMonth = MainActivity.firstDate.toLocalDate().withDayOfMonth(1);
+        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+        while (!firstMonth.isAfter(currentMonth)) {
+            switch (firstMonth.getMonth()) {
                 case JANUARY:
-                    months.add(context.getString(R.string.jan) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.jan) + " " + firstMonth.getYear());
                     break;
                 case FEBRUARY:
-                    months.add(context.getString(R.string.feb) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.feb) + " " + firstMonth.getYear());
                     break;
                 case MARCH:
-                    months.add(context.getString(R.string.mar) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.mar) + " " + firstMonth.getYear());
                     break;
                 case APRIL:
-                    months.add(context.getString(R.string.apr) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.apr) + " " + firstMonth.getYear());
                     break;
                 case MAY:
-                    months.add(context.getString(R.string.may) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.may) + " " + firstMonth.getYear());
                     break;
                 case JUNE:
-                    months.add(context.getString(R.string.jun) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.jun) + " " + firstMonth.getYear());
                     break;
                 case JULY:
-                    months.add(context.getString(R.string.jul) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.jul) + " " + firstMonth.getYear());
                     break;
                 case AUGUST:
-                    months.add(context.getString(R.string.aug) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.aug) + " " + firstMonth.getYear());
                     break;
                 case SEPTEMBER:
-                    months.add(context.getString(R.string.sep) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.sep) + " " + firstMonth.getYear());
                     break;
                 case OCTOBER:
-                    months.add(context.getString(R.string.oct) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.oct) + " " + firstMonth.getYear());
                     break;
                 case NOVEMBER:
-                    months.add(context.getString(R.string.nov) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.nov) + " " + firstMonth.getYear());
                     break;
                 case DECEMBER:
-                    months.add(context.getString(R.string.dec) + " " + firstDate.getYear());
+                    months.add(context.getString(R.string.dec) + " " + firstMonth.getYear());
                     break;
             }
-            firstDate = firstDate.plusMonths(1).withDayOfMonth(1);
+            firstMonth = firstMonth.plusMonths(1);
         }
         Collections.reverse(months);
         return months;

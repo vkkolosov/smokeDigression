@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -136,17 +137,25 @@ public class CommonChart {
                     lineChart.clear();
                 }
                 List<Entry> entries = getDayGraphEntries(context, sortedResult, localDate);
-                if (!entries.isEmpty()) {
-                    // Гарантированная сортировка точек по оси X перед передачей в MPAndroidChart
-                    entries.sort(Comparator.comparingDouble(Entry::getX));
+                new Handler(Looper.getMainLooper()).post(() -> {
+                            if (!entries.isEmpty()) {
+                                entries.sort(Comparator.comparingDouble(Entry::getX));
 
-                    LineDataSet lineDataSet = new LineDataSet(entries, localDate + " " + context.getString(R.string.day_graph));
-                    LineData lineData = new LineData(lineDataSet);
-                    lineChart.clear();
-                    lineChart.setData(lineData);
-                } else {
-                    lineChart.clear();
-                }
+                                LineDataSet lineDataSet = new LineDataSet(entries, localDate + " " + context.getString(R.string.day_graph));
+                                lineDataSet.setLineWidth(2f);
+                                lineDataSet.setDrawCircles(true);
+                                lineDataSet.setCircleRadius(3f);
+
+                                LineData lineData = new LineData(lineDataSet);
+                                lineChart.clear();
+                                lineChart.setData(lineData);
+                                lineChart.notifyDataSetChanged();
+                                lineChart.invalidate();
+                            } else {
+                                lineChart.clear();
+                                lineChart.invalidate();
+                            }
+                        });
                 Set<SmokedCigarettesEntity> currentDates = sortedResult.stream()
                         .filter(date -> date.date.toLocalDate().isEqual(localDate))
                         .collect(Collectors.toSet());
@@ -555,18 +564,24 @@ public class CommonChart {
                 } else {
                     //TODO Добавить zero по currentDay
                     List<Entry> entries = getMonthGraphEntries(sortedResult, month);
-                    if (!entries.isEmpty()) {
-                        // Гарантированная сортировка
-                        entries.sort(Comparator.comparingDouble(Entry::getX));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (!entries.isEmpty()) {
+                            entries.sort(Comparator.comparingDouble(Entry::getX));
 
-                        LineDataSet lineDataSet = new LineDataSet(entries, month.getMonth() + "-" + month.getYear() + " " + context.getString(R.string.month_graph));
-                        LineData lineData = new LineData(lineDataSet);
-                        lineData.setValueFormatter(new DefaultValueFormatter(1));
-                        lineChart.clear();
-                        lineChart.setData(lineData);
-                    } else {
-                        lineChart.clear();
-                    }
+                            LineDataSet lineDataSet = new LineDataSet(entries, month.getMonth() + "-" + month.getYear() + " " + context.getString(R.string.month_graph));
+                            lineDataSet.setLineWidth(2f);
+
+                            LineData lineData = new LineData(lineDataSet);
+                            lineData.setValueFormatter(new DefaultValueFormatter(1));
+                            lineChart.clear();
+                            lineChart.setData(lineData);
+                            lineChart.notifyDataSetChanged();
+                            lineChart.invalidate();
+                        } else {
+                            lineChart.clear();
+                            lineChart.invalidate();
+                        }
+                    });
                 }
                 currentCigarettesMonth = sortedResult.size();
 

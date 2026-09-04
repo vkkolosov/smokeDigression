@@ -44,16 +44,12 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import vk.kolosov.smokedigression.charts.CommonChart;
 import vk.kolosov.smokedigression.db.SettingsRepository;
@@ -292,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                             //UPDATE DAY UI
                             //TODO возможно надо сделать update arrows
                             //TODO сделать метод setOnDayArrows
-                            CommonChart.setDayLineChart(getBaseContext(), smokedCigarettesDao, executors, lineChart, LocalDate.now());
+                            CommonChart.setDayLineChart(MainActivity.this, smokedCigarettesDao, executors, lineChart, LocalDate.now());
                             updateClickableArrowsDay();
                             updateClickableArrowsMonth(LocalDate.now());
                             if (setOn != null && setOn == 1) {
@@ -399,6 +395,12 @@ public class MainActivity extends AppCompatActivity {
                     monthPicked = 1;
 
                     List<String> months = ScrollViewDates.convertToScrollViewList(this);
+
+                    if (months.isEmpty()) {
+                        CommonChart.setMonthLineChart(this, smokedCigarettesDao, executors, lineChart, now);
+                        updateClickableArrowsMonth(now);
+                        return;
+                    }
 
                     NumberPicker numberPicker = new NumberPicker(this);
                     String[] displayedValues = months.toArray(new String[months.size()]);
