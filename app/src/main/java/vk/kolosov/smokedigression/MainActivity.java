@@ -59,6 +59,7 @@ import vk.kolosov.smokedigression.db.dao.SmokedCigarettesDao;
 import vk.kolosov.smokedigression.db.entity.SettingsEntity;
 import vk.kolosov.smokedigression.db.entity.SmokedCigarettesEntity;
 import vk.kolosov.smokedigression.util.ScrollViewDates;
+import vk.kolosov.smokedigression.util.TestDatabaseSeeder;
 
 //TODO слева сделать кнопку INFO -> Описать, как работает приложение
 //TODO разобраться с уведомлениями
@@ -469,6 +470,10 @@ D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:07.955191
 D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:25.148050
 D/CommonChart: dayLineChartUpdated 2024-09-15T23:31:27.959274
          */
+
+
+        //для теста
+        //TestDatabaseSeeder.seedTestData(this, smokedCigarettesDao, executors);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
